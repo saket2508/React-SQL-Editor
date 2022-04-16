@@ -1,24 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import Editor from "./components/QueryInput";
+import Records from "./components/Records";
+import useCSV from "./helper/useCSV";
 
 function App() {
+  const data = useCSV();
+  const [results, setResults] = useState<TableData | null>(null);
+
+  useEffect(() => {
+    setResults(data);
+  }, [data]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <section className="editorContainer">
+        <Editor />
+        {results === null ? (
+          <div className="mb-2">
+            <div className="spinner-grow text-light" role="status">
+              <span className="visually-hidden">Fetching Data...</span>
+            </div>
+          </div>
+        ) : (
+          <Records results={results}/>
+        )}
+      </section>
     </div>
   );
 }
