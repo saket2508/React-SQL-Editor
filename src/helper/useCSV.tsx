@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import parseCSV from "./index";
+import { parseCSV } from "./index";
 
-export default function useCSV(filePath: string = "./products.csv") {
+export default function useCSV(filePath: string = "./products.csv"): TableData {
   const [parsedData, setParsedData] = useState<TableData>({
-      rows: [],
-      cols:[],
-      length: 0
+    rows: [],
+    cols: [],
+    length: 0,
   });
 
   useEffect(() => {
@@ -16,7 +16,7 @@ export default function useCSV(filePath: string = "./products.csv") {
       setParsedData({
         rows: rows,
         cols: cols,
-        length: length
+        length: length,
       });
     })();
   }, []);
