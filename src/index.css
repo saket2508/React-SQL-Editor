@@ -65,8 +65,7 @@ td, th {
   opacity: 1;
 }
 
-.queryBtn {
-  background-color: rgb(251 191 36);
+.btnCustom {
   padding: 0.6rem;
   outline: none;
   border: none;
@@ -76,9 +75,25 @@ td, th {
   font-weight: 600;
 }
 
+.queryBtn {
+  background-color: rgb(251 191 36);
+  color: black;
+}
+
 .queryBtn:focus, .queryBtn:active {
   outline: none;
   border: none;
+}
+
+.restoreBtn {
+  background-color: transparent;
+  color: white;
+  border: 1.2px solid white;
+}
+
+.restoreBtn:hover, .restoreBtn:focus {
+  background-color: white;
+  color: black;
 }
 
 .tableContainer {
