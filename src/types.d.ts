@@ -11,5 +11,7 @@ type Filter = {
         value: any;
         match: 1 | 0 | -1;
         inc?: boolean;
+        cmp?: '==' | '<' | '>' | '<=' | '>=';
+        valIsCol?: boolean;
     }[]
 }

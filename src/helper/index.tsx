@@ -29,13 +29,13 @@ export function parseCSV(csvBlob: string, delim = ","): TableData {
 export function parseSQLQuery(
   query: string,
   colNames: string[],
-  tableName = "products"
+  tableName = "Products"
 ): {
   result: Filter | null;
   isValid: boolean;
 } {
-
-  const keywords = ['select', '*', 'from', 'where', 'or', 'and', 'not'];
+  const keywords = ["select", "*", "from", "where", "or", "and", "not"];
+  const operators = ['>=', '<=', '>', '<', '='];
 
   const priorities: Record<string, string[]> = {
     1: ["select"],
@@ -79,7 +79,7 @@ export function parseSQLQuery(
         if ((exp[i] === "and" || exp[i] === "or") && exp[i + 1] === "not") {
           cmp += 1;
           _eval["match"] = -1;
-          _eval['inc'] = exp[i] === 'and' ? true : false;
+          _eval["inc"] = exp[i] === "and" ? true : false;
           i += 2;
         } else {
           cmp += 1;
@@ -88,15 +88,30 @@ export function parseSQLQuery(
         }
       }
       if (
-        colNames.includes(exp[i]) &&
-        exp[i + 1] === "=" &&
-        exp[i + 2] !== undefined
+        (colNames.includes(exp[i]) && operators.includes(exp[i+1]) && exp[i+2] !== undefined)
       ) {
         if (i === 0) {
           _eval["match"] = 1;
         }
         _eval["col"] = exp[i];
         _eval["value"] = exp[i + 2];
+        switch (exp[i + 1]) {
+          case "=":
+            _eval["cmp"] = "==";
+            break;
+          case "<":
+            _eval["cmp"] = "<";
+            break;
+          case ">":
+            _eval["cmp"] = ">";
+            break;
+          case "<=":
+            _eval["cmp"] = "<=";
+            break;
+          case ">=":
+            _eval["cmp"] = ">=";
+            break;
+        }
         op += 1;
         i += 3;
       } else {
@@ -115,20 +130,21 @@ export function parseSQLQuery(
     .trim()
     .replaceAll("'", "")
     .replaceAll(",", " ")
-    .replaceAll(";", "");
+    .replaceAll(";", "")
+
   let sub = queryLC
     .split(" ")
     .map((term) => term.trim())
     .filter((term) => term !== "");
-  
+
   // only convert keywords to lowercase
   sub.forEach((term, i) => {
-    if(keywords.includes(term.toLowerCase())) {
+    if (keywords.includes(term.toLowerCase())) {
       sub[i] = term.toLowerCase();
     }
   });
 
-  if (sub[0] !== "select") {
+  if (sub[0] !== "select" || sub.length < 4) {
     return { isValid: false, result: null };
   }
 
@@ -157,27 +173,58 @@ export function parseSQLQuery(
   return { isValid: true, result: result };
 }
 
+export function readResult(
+  result: Filter,
+  initialRecords: Record<string, any>[]
+): TableData {
+  if (result.filter.length === 0) {
+    let includedCols = result.cols;
+    let allRows = initialRecords.map((row) => {
+      let newRow: Record<string, any> = {};
+      includedCols.forEach((incCol) => {
+        newRow[incCol] = row[incCol];
+      });
+      return newRow;
+    });
+    return {
+      cols: includedCols,
+      rows: allRows,
+      length: allRows.length,
+    };
+  }
 
-export function readResult(result: Filter, intialRecords: TableData) {
   // Type insensitive comparison of values
-  let filterExp =
-    result.filter[0].match === 1
-      ? `row['${result.filter[0].col}'] == '${result.filter[0].value}'`
-      : `row['${result.filter[0].col}'] != '${result.filter[0].value}'`;
-  result.filter.slice(1).forEach((obj) => {
-    if (obj.match === 1) {
-      filterExp += `row['${obj.col}'] == '${obj.value}'`;
-    } else if (obj.match === 0) {
-      filterExp += ` || row['${obj.col}'] == '${obj.value}'`;
+  let filterExp = "";
+  for (let i = 0; i < result.filter.length; i++) {
+    let cmp = result.filter[i].cmp;
+    let column = result.filter[i].col;
+    let value = result.filter[i].value;
+    let match = result.filter[i].match;
+    let inc = result.filter[i].inc;
+    let valIsColumn = result.filter[i].valIsCol;
+    const leftHandExp = `row['${column}']`;
+    const rightHandExp = valIsColumn ? `row['${value}']` : `'${value}'`;
+    if(i === 0) {
+      if(match === 1) {
+        filterExp += `${leftHandExp} ${cmp} ${rightHandExp}`;
+      } else {
+        filterExp += `!(${leftHandExp} ${cmp} ${rightHandExp})`;
+      }
     } else {
-      filterExp +=
-        obj.inc === true
-          ? ` && row['${obj.col}'] != '${obj.value}'`
-          : ` || row['${obj.col}'] != '${obj.value}'`;
+      if (match === 1) {
+        filterExp += ` && ${leftHandExp} ${cmp} ${rightHandExp}`;
+      } else if (match === 0) {
+        filterExp += ` || ${leftHandExp} ${cmp} ${rightHandExp}`;
+      } else {
+        filterExp +=
+          inc === true
+            ? ` && !(${leftHandExp} ${cmp} ${rightHandExp})`
+            : ` || !(${leftHandExp} ${cmp} ${rightHandExp})`;
+      }
     }
-  });
+  }
   let includedCols = result.cols;
-  let allRows = intialRecords.rows.map((row) => {
+  let allRows = initialRecords.map((row) => {
     let newRow: Record<string, any> = {};
     includedCols.forEach((incCol) => {
       newRow[incCol] = row[incCol];
@@ -185,5 +232,9 @@ export function readResult(result: Filter, intialRecords: TableData) {
     return newRow;
   });
   let filteredRecords = allRows.filter((row) => eval(filterExp));
-  return filteredRecords;
+  return {
+    rows: filteredRecords,
+    cols: result.cols,
+    length: filteredRecords.length,
+  };
 }

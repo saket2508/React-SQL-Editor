@@ -1,22 +1,34 @@
 import React, { useEffect, useState } from "react";
-import Editor from "./components/QueryInput";
-import Records from "./components/Records";
+import Editor from "./components/Editor";
+import Table from "./components/Table";
 import useCSV from "./helper/useCSV";
 
 function App() {
   const data = useCSV();
   const [results, setResults] = useState<TableData | null>(null);
   const [records, setRecords] = useState<TableData | null>(null);
+  const [queryStatus, setQueryStatus] = useState<{status?: boolean; timeTaken?: number}>({})
 
   useEffect(() => {
     setResults(data);
     setRecords(data);
   }, [data]);
 
+  const modifyTableData = (newRecords: TableData) => {
+    setRecords(newRecords);
+  };
+
+  const restoreTable = () => {
+    const data: TableData = {
+      ...results!
+    };
+    setRecords(data);
+  }
+
   return (
     <div className="container">
       <section className="editorContainer">
-        {results === null ? (
+        {results === null || records === null ? (
           <>
             <Editor/>
             <div className="mb-2">
@@ -27,8 +39,13 @@ function App() {
           </>
         ) : (
           <>
-            <Editor colNames={results.cols} records={results}/>
-            <Records results={results} />
+            <Editor
+              colNames={results.cols}
+              initialRows={results.rows}
+              modifyTableData={modifyTableData}
+              setQueryStatus={setQueryStatus}
+            />
+            <Table data={records} totalRecords={results.length} queryStatus={queryStatus}/>
           </>
         )}
       </section>

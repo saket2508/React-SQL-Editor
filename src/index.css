@@ -41,14 +41,7 @@ code {
 }
 
 .editorError {
-  padding: 1.4rem;
-  font-size: 0.9rem;
-  background-color: rgb(55 65 81);
-  color: white;
-  font-weight: 600;
-  letter-spacing: 0.125rem;
-  border: 0.8px solid rgb(248 113 113);
-  width: 100%;
+  border: 1.0px solid rgb(248 113 113) !important;
 }
 
 .errorText {
@@ -100,21 +93,8 @@ td, th {
   margin-right: 0.2em;
 }
 
-/* width */
-::-webkit-scrollbar {
-  width: 5px !important;
+.midsmall {
+  font-size: 1rem;
+  margin-top: 0;
+  margin-bottom: 0.3em;
 }
-
-/* Track */
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: white;
-  border-radius: 50px;
-}
-
-
-
