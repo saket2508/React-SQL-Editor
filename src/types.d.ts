@@ -13,5 +13,9 @@ type Filter = {
         inc?: boolean;
         cmp?: '==' | '<' | '>' | '<=' | '>=';
         valIsCol?: boolean;
-    }[]
+    }[];
+    sort?: {
+        col: string;
+        order: 1 | -1;
+    }
 }

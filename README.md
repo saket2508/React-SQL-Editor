@@ -4,8 +4,8 @@
 
 - [x] General UI layout with live editor and table.
 
+- [x] Predefined SQL queries for filtering records.
+
 - [ ] Pagination controls for table.
 
-- [ ] Predefined SQL queries for filtering records.
-
-- [ ] Dark v Light mode (OPTIONAL).
+- [ ] Export data as CSV or JSON.
