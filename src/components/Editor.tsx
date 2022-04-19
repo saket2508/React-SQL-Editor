@@ -2,20 +2,21 @@ import { useState } from 'react';
 import { parseSQLQuery, readResult } from '../helper';
 
 type Props = {
+    tableName: string;
     colNames?: string[];
     initialRows?: Record<string, any>[];
     modifyTableData?: (filteredData: TableData) => void;
     setQueryStatus?: (newStatus: { status: boolean; timeTaken: number }) => void;
 };
 
-export default function Editor({ colNames, initialRows, modifyTableData, setQueryStatus }: Props) {
+export default function Editor({ tableName, colNames, initialRows, modifyTableData, setQueryStatus }: Props) {
     const [error, setError] = useState<boolean>(false);
     const [query, setQuery] = useState<string>('');
 
     const handleSubmit = () => {
         let startTime = new Date().getTime();
         try {
-            let { isValid, result } = parseSQLQuery(query, colNames || []);;
+            let { isValid, result } = parseSQLQuery(query, colNames || [], tableName);;
             if (isValid && result !== null) {
                 if (error) {
                     setError(false);
@@ -50,7 +51,7 @@ export default function Editor({ colNames, initialRows, modifyTableData, setQuer
     return (
         <div className="col-11 col-sm-7 mb-4">
             <textarea
-                placeholder="SELECT * FROM Products;"
+                placeholder={`SELECT * FROM ${tableName};`}
                 className={`editorInput ${error && 'editorError'}`}
                 rows={4}
                 onChange={(e) => {

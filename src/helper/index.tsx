@@ -2,7 +2,7 @@ export function parseCSV(csvBlob: string, delim = ','): TableData {
     const lines = csvBlob.split('\n');
     const tableHead = lines[0].split(delim);
     const tableBody = [];
-    for (let i = 1; i < lines.length; i++) {
+    for (let i = 1; i < lines.length - 1; i++) {
         const row: Record<string, any> = {};
         const line = lines[i];
         const values = line.split(delim);
@@ -22,7 +22,7 @@ export function parseCSV(csvBlob: string, delim = ','): TableData {
     return {
         cols: tableHead,
         rows: tableBody,
-        length: lines.length - 1,
+        length: lines.length - 2,
     };
 }
 
@@ -265,9 +265,6 @@ export function readResult(result: Filter, initialRecords: Record<string, any>[]
         };
     }
 
-    // generate sort and filter expressions from result
-
-    // Type insensitive comparison of values
     let filterExp = '';
     for (let i = 0; i < result.filter.length; i++) {
         let cmp = result.filter[i].cmp;
