@@ -131,3 +131,16 @@ td, th {
 .drawerItem:hover {
   color: 0d6efd;
 }
+
+.customMenu {
+  background-color: rgb(55 65 81);
+  color: white;
+}
+
+.customMenu li {
+  color: white;
+}
+
+.fw-semibold {
+  font-weight: 500;
+}
