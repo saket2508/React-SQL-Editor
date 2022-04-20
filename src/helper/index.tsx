@@ -34,7 +34,19 @@ export function parseSQLQuery(
     result: Filter | null;
     isValid: boolean;
 } {
-    const keywords = ['select', '*', 'from', 'where', 'or', 'and', 'not', 'order', 'by', 'asc', 'desc'];
+    const keywords = [
+        'select',
+        '*',
+        'from',
+        'where',
+        'or',
+        'and',
+        'not',
+        'order',
+        'by',
+        'asc',
+        'desc',
+    ];
     const operators = ['>=', '<=', '>', '<', '='];
 
     const priorities: Record<string, string[]> = {
@@ -181,38 +193,72 @@ export function parseSQLQuery(
 
     let sub = queryLC
         .split(' ')
-        .map((term) => term.trim())
+        .map((term) => term.trim().replaceAll("'", ''))
         .filter((term) => term !== '');
 
     // only convert keywords to lowercase
+    // Also check if any term contains an expression of some operator and operand(s) without spaces
+    const regexMatchSpaces = operators.map(
+        (term) => new RegExp(`[a-zA-Z0-9_]*${term}[a-zA-Z0-9_]*`)
+    );
+
+    const lst = [];
     for (let i = 0; i < sub.length; i++) {
         let term = sub[i];
         if (keywords.includes(term.toLowerCase())) {
-            sub[i] = term.toLowerCase();
+            term = term.toLowerCase();
+            lst.push(term);
+        } else {
+            if (operators.some((op) => term.includes(op))) {
+                if (operators.includes(term)) {
+                    lst.push(term);
+                } else {
+                    for (let matchExp of regexMatchSpaces) {
+                        if (term.match(matchExp)) {
+                            let operands = term.match(/[a-zA-Z0-9_]*/g);
+                            let symbols = term.match(/[<=>]/g);
+                            if (operands !== null && symbols !== null) {
+                                operands = operands.filter((term) => term !== '');
+                                symbols = symbols.filter((term) => term !== '');
+                                const operator =
+                                    symbols.length === 1 ? symbols[0] : symbols[0] + symbols[1];
+                                const operand1 = operands[0];
+                                const operand2 = operands[1];
+                                lst.push(operand1);
+                                lst.push(operator);
+                                lst.push(operand2);
+                                break;
+                            }
+                        }
+                    }
+                }
+            } else {
+                lst.push(term);
+            }
         }
     }
-
-    if (sub[0] !== 'select' || sub.length < 4) {
+    
+    if (lst[0] !== 'select' || lst.length < 4) {
         return { isValid: false, result: null };
     }
 
-    if (sub.includes('order')) {
-        let i = sub.indexOf('order');
-        if (!sub[i + 1] || sub[i + 1] !== 'by') {
+    if (lst.includes('order')) {
+        let i = lst.indexOf('order');
+        if (!lst[i + 1] || lst[i + 1] !== 'by') {
             return { isValid: false, result: null };
         }
     }
 
-    for (let i = 1; i < sub.length; i++) {
-        let currTerm = sub[i].trim();
-        let prevTerm = sub[i - 1].trim();
+    for (let i = 1; i < lst.length; i++) {
+        let currTerm = lst[i].trim();
+        let prevTerm = lst[i - 1].trim();
         let prevPriority = getPriority(prevTerm);
         let currPriority = getPriority(currTerm);
         if (currPriority === 5 && prevPriority === 4) {
             if (currTerm === 'where') {
-                return checkAfterWhere(sub.slice(i + 1));
+                return checkAfterWhere(lst.slice(i + 1));
             } else {
-                return checkAfterOrderBy(sub.slice(i + 2));
+                return checkAfterOrderBy(lst.slice(i + 2));
             }
         }
         if (!currPriority || !prevPriority) {
@@ -247,7 +293,7 @@ export function readResult(result: Filter, initialRecords: Record<string, any>[]
     }
 
     if (result.filter.length === 0) {
-        if(sortExp) {
+        if (sortExp) {
             newRecords = newRecords.sort((a, b) => eval(sortExp));
         }
         let includedCols = result.cols;
@@ -295,10 +341,10 @@ export function readResult(result: Filter, initialRecords: Record<string, any>[]
             }
         }
     }
-    if(filterExp) {
+    if (filterExp) {
         newRecords = newRecords.filter((row) => eval(filterExp));
     }
-    if(sortExp) {
+    if (sortExp) {
         newRecords = newRecords.sort((a, b) => eval(sortExp));
     }
     let includedCols = result.cols;

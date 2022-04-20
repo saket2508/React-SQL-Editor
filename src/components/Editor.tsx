@@ -5,12 +5,14 @@ type Props = {
     tableName: string;
     colNames?: string[];
     initialRows?: Record<string, any>[];
+    isModified?:boolean;
     modifyTableData?: (filteredData: TableData) => void;
     modifyQueryStatus?: (newStatus: { status?: boolean; timeTaken?: number }) => void;
 };
 
 export default function Editor({
     tableName,
+    isModified,
     colNames,
     initialRows,
     modifyTableData,
@@ -31,6 +33,17 @@ export default function Editor({
             modifyQueryStatus && modifyQueryStatus({});
         }
     }, [tableName]);
+
+
+    useEffect(() => {
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+        } else {
+            if(isModified === false) {
+                setQuery('');
+            }
+        }
+    }, [isModified])
 
     const handleSubmit = () => {
         let startTime = new Date().getTime();

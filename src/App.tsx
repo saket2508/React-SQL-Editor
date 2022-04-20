@@ -253,6 +253,7 @@ function App() {
                             colNames={data.cols}
                             initialRows={res.rows}
                             modifyTableData={modifyTableData}
+                            isModified={isModified}
                             modifyQueryStatus={modifyQueryStatus}
                         />
                         <div className="col-12 col-sm-10">
