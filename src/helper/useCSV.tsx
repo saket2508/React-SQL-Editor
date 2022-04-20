@@ -27,24 +27,19 @@ export default function useCSV(tableName: string): TableData {
         cols: [],
         length: 0,
     });
-    const isInitialMount = useRef(true);
 
     useEffect(() => {
-        if (isInitialMount.current) {
-            isInitialMount.current = false;
-        } else {
-            (async () => {
-                const urlPath = csvPaths[tableName];
-                const res = await fetch(urlPath);
-                const csvBlob = await res.text();
-                const { rows, cols, length } = parseCSV(csvBlob);
-                setParsedData({
-                    rows: rows,
-                    cols: cols,
-                    length: length,
-                });
-            })();
-        }
+        (async () => {
+            const urlPath = csvPaths[tableName];
+            const res = await fetch(urlPath);
+            const csvBlob = await res.text();
+            const { rows, cols, length } = parseCSV(csvBlob);
+            setParsedData({
+                rows: rows,
+                cols: cols,
+                length: length,
+            });
+        })();
     }, [tableName]);
 
     return parsedData;
