@@ -12,40 +12,55 @@ function App() {
     const [startIdx, setStartIdx] = useState(0);
     const [endIdx, setEndIdx] = useState(5);
     const [pageLength, setPageLength] = useState(5);
+    const [data, setData] = useState<TableData>({
+        rows: [],
+        cols: [],
+        length: -1,
+    });
     const [records, setRecords] = useState<TableData | null>(null);
     const [isModified, setIsModified] = useState(false);
     const [queryStatus, setQueryStatus] = useState<{ status?: boolean; timeTaken?: number }>({});
 
-    const data = useCSV(activeTable);
+    const res = useCSV(activeTable);
 
     useEffect(() => {
-        const dataLength = data.length;
-        if(dataLength <= 10) {
+        const dataLength = res.length;
+        setData({
+            rows: res.rows,
+            cols: res.cols,
+            length: res.length
+        });
+        if (dataLength <= 10) {
             setHidePagination(true);
             setRecords({
-                cols: data.cols,
-                rows: data.rows,
-                length: data.length,
+                cols: res.cols,
+                rows: res.rows,
+                length: res.length,
             });
             return;
         }
-        if(hidePagination) {
+        if (hidePagination) {
             setHidePagination(false);
         }
+        const pageRecords = res.rows.slice(0, 5);
+        setRecords({
+            rows: pageRecords,
+            cols: res.cols,
+            length: res.length,
+        });
         setStartIdx(0);
         setEndIdx(5);
         setCurrPage(1);
         setPageLength(5);
-        const pageRecords = data.rows.slice(0, 5);
-        setRecords({
-            rows: pageRecords,
-            cols: data.cols,
-            length: data.length,
-        });
-    }, [data]);
+    }, [res]);
 
     const modifyTableData = (newRecords: TableData) => {
         setIsModified(true);
+        setData({
+            rows: newRecords.rows,
+            cols: newRecords.cols,
+            length: newRecords.length
+        });
         if (newRecords.length <= 10) {
             setHidePagination(true);
             setRecords({
@@ -55,7 +70,7 @@ function App() {
             });
             return;
         }
-        if(hidePagination) {
+        if (hidePagination) {
             setHidePagination(false);
         }
         setStartIdx(0);
@@ -75,12 +90,17 @@ function App() {
         setStartIdx(0);
         setEndIdx(5);
         setPageLength(5);
-        let pageRecords = data.rows.slice(0, 5);
+        let pageRecords = res.rows.slice(0, 5);
         setRecords({
-            cols: data.cols,
+            cols: res.cols,
             rows: pageRecords,
-            length: data.length,
+            length: res.length,
         });
+        setData({
+            rows: res.rows,
+            cols: res.cols,
+            length: res.length
+        })
         setQueryStatus({});
         setIsModified(false);
         if (hidePagination) {
