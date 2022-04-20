@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { parseSQLQuery, readResult } from '../helper';
 
 type Props = {
@@ -6,17 +6,36 @@ type Props = {
     colNames?: string[];
     initialRows?: Record<string, any>[];
     modifyTableData?: (filteredData: TableData) => void;
-    setQueryStatus?: (newStatus: { status: boolean; timeTaken: number }) => void;
+    modifyQueryStatus?: (newStatus: { status?: boolean; timeTaken?: number }) => void;
 };
 
-export default function Editor({ tableName, colNames, initialRows, modifyTableData, setQueryStatus }: Props) {
+export default function Editor({
+    tableName,
+    colNames,
+    initialRows,
+    modifyTableData,
+    modifyQueryStatus,
+}: Props) {
     const [error, setError] = useState<boolean>(false);
     const [query, setQuery] = useState<string>('');
+    const isInitialMount = useRef(true);
+
+    useEffect(() => {
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+        } else {
+            setQuery('');
+            if (error) {
+                setError(false);
+            }
+            modifyQueryStatus && modifyQueryStatus({});
+        }
+    }, [tableName]);
 
     const handleSubmit = () => {
         let startTime = new Date().getTime();
         try {
-            let { isValid, result } = parseSQLQuery(query, colNames || [], tableName);;
+            let { isValid, result } = parseSQLQuery(query, colNames || [], tableName);
             if (isValid && result !== null) {
                 if (error) {
                     setError(false);
@@ -26,14 +45,14 @@ export default function Editor({ tableName, colNames, initialRows, modifyTableDa
                     modifyTableData!(filteredData);
                     let endTime = new Date().getTime();
                     let timeTaken = endTime - startTime;
-                    setQueryStatus!({
+                    modifyQueryStatus!({
                         status: true,
                         timeTaken: timeTaken,
                     });
                 }
             } else {
                 setError(true);
-                setQueryStatus!({
+                modifyQueryStatus!({
                     status: false,
                     timeTaken: -1,
                 });
@@ -41,7 +60,7 @@ export default function Editor({ tableName, colNames, initialRows, modifyTableDa
         } catch (error) {
             console.error(error);
             setError(true);
-            setQueryStatus!({
+            modifyQueryStatus!({
                 status: false,
                 timeTaken: -1,
             });
@@ -54,6 +73,7 @@ export default function Editor({ tableName, colNames, initialRows, modifyTableDa
                 placeholder={`SELECT * FROM ${tableName};`}
                 className={`editorInput ${error && 'editorError'}`}
                 rows={4}
+                value={query}
                 onChange={(e) => {
                     setQuery(e.target.value);
                 }}

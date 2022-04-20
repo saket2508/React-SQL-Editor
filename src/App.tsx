@@ -85,7 +85,26 @@ function App() {
         });
     };
 
+    const modifyQueryStatus = (obj: { status?: boolean; timeTaken?: number }) => {
+        setQueryStatus(obj);
+    }
+
     const restoreTable = () => {
+        setData({
+            rows: res.rows,
+            cols: res.cols,
+            length: res.length
+        });
+        if(hidePagination && res.rows.length <= 10) {
+            setQueryStatus({});
+            setIsModified(false);
+            setRecords({
+                cols: res.cols,
+                rows: res.rows,
+                length: res.length,
+            });
+            return;
+        }
         setCurrPage(1);
         setStartIdx(0);
         setEndIdx(5);
@@ -96,11 +115,6 @@ function App() {
             rows: pageRecords,
             length: res.length,
         });
-        setData({
-            rows: res.rows,
-            cols: res.cols,
-            length: res.length
-        })
         setQueryStatus({});
         setIsModified(false);
         if (hidePagination) {
@@ -197,11 +211,11 @@ function App() {
     return (
         <div className="container">
             <div className="mt-3 ps-2 text-light">
-                <a
+                <button
                     className="hamburgerIcon"
                     data-bs-toggle="offcanvas"
-                    href="#offcanvasExample"
-                    role="button"
+                    data-bs-target="#offcanvasExample"
+                    type="button"
                     aria-controls="offcanvasExample"
                 >
                     <svg
@@ -219,11 +233,11 @@ function App() {
                             d="M4 6h16M4 12h16M4 18h16"
                         />
                     </svg>
-                </a>
+                </button>
             </div>
             <Drawer activeTable={activeTable} changeTable={changeTable} />
             <section className="editorContainer">
-                {data === null || records === null ? (
+                {data.length === -1 || records === null || !res ? (
                     <>
                         <Editor tableName={activeTable} />
                         <div className="mb-2">
@@ -237,17 +251,18 @@ function App() {
                         <Editor
                             tableName={activeTable}
                             colNames={data.cols}
-                            initialRows={data.rows}
+                            initialRows={res.rows}
                             modifyTableData={modifyTableData}
-                            setQueryStatus={setQueryStatus}
+                            modifyQueryStatus={modifyQueryStatus}
                         />
                         <div className="col-12 col-sm-10">
                             <Table
                                 data={records}
-                                totalRecords={data.length}
+                                totalRecords={res.length}
                                 queryStatus={queryStatus}
                                 isModified={isModified}
                                 restoreTable={restoreTable}
+                                tableName={activeTable}
                             />
                             {hidePagination ? (
                                 <div></div>

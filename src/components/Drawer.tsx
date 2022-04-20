@@ -9,6 +9,8 @@ export default function Drawer({ activeTable, changeTable }: {
         'Orders',
         'Products',
         'Regions',
+        'Shippers',
+        'Suppliers',
         'Territories',
     ];
     return (

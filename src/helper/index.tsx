@@ -191,6 +191,7 @@ export function parseSQLQuery(
             sub[i] = term.toLowerCase();
         }
     }
+
     if (sub[0] !== 'select' || sub.length < 4) {
         return { isValid: false, result: null };
     }
