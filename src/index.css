@@ -151,3 +151,19 @@ td, th {
 .fw-semibold {
   font-weight: 500;
 }
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px !important;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: white;
+  border-radius: 50px;
+}

@@ -28,7 +28,7 @@ function App() {
         setData({
             rows: res.rows,
             cols: res.cols,
-            length: res.length
+            length: res.length,
         });
         if (dataLength <= 10) {
             setHidePagination(true);
@@ -59,7 +59,7 @@ function App() {
         setData({
             rows: newRecords.rows,
             cols: newRecords.cols,
-            length: newRecords.length
+            length: newRecords.length,
         });
         if (newRecords.length <= 10) {
             setHidePagination(true);
@@ -87,15 +87,15 @@ function App() {
 
     const modifyQueryStatus = (obj: { status?: boolean; timeTaken?: number }) => {
         setQueryStatus(obj);
-    }
+    };
 
     const restoreTable = () => {
         setData({
             rows: res.rows,
             cols: res.cols,
-            length: res.length
+            length: res.length,
         });
-        if(hidePagination && res.rows.length <= 10) {
+        if (hidePagination && res.rows.length <= 10) {
             setQueryStatus({});
             setIsModified(false);
             setRecords({
@@ -237,7 +237,7 @@ function App() {
             </div>
             <Drawer activeTable={activeTable} changeTable={changeTable} />
             <section className="editorContainer">
-                {data.length === -1 || records === null || !res ? (
+                {records === null || data.length <= 0 ? (
                     <>
                         <Editor tableName={activeTable} />
                         <div className="mb-2">
