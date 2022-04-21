@@ -4,8 +4,6 @@ An SQL Editor built on React and Typescript.
 
 [Check out the demo](https://dulcet-maamoul-2cd9df.netlify.app/)
 
-<br/>
-
 ## 📝 Todos
 
 - [x] Custom hook for parsing csv files.
@@ -20,7 +18,7 @@ An SQL Editor built on React and Typescript.
 
 - [ ] Dark v Light mode.
 
-<br/>
+<br>
 
 ## 📓 Overview
 
@@ -38,7 +36,7 @@ An SQL Editor built on React and Typescript.
 
 - Examples of queries that can be run in this app are shown below (see screenshots)
 
-<br/>
+<br>
 
 ## 🔥 Performance
 
@@ -47,7 +45,7 @@ Following is the lighthouse report summary for this webapp.
 <img src="src/screenshots/lighthouse_report.jpeg"/>
 <br/> 
 
-<br/>
+<br>
 
 ## 🎯 Quickstart
 
@@ -65,19 +63,19 @@ Following is the lighthouse report summary for this webapp.
 
 - The app should have started on `localhost:3000`
 
-<br/>
+<br>
 
 ## 🖼️ Screenshots
 
 <img src="src/screenshots/query_1.jpeg"/>
-<br/> 
+<br> 
 
 <img src="src/screenshots/query_2.jpeg"/>
-<br/>
+<br>
 
 <img src="src/screenshots/query_3.jpeg"/>
-<br/>
+<br>
 
 <img src="src/screenshots/query_4.jpeg"/>
-<br/>
+<br>
 
