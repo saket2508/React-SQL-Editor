@@ -22,7 +22,7 @@ An SQL Editor built on React and Typescript.
 
 ## 📓 Overview
 
-- This repository contains the source code of the task that was given as part of Atlan's frontend hiring challenge.
+- This repository contains the source code for the task that was given as part of Atlan's frontend hiring challenge.
 
 - The objective was to build a SQL Editor in any JS framework of your choice. I have used React and Typescript. Users should be able to run queries on a set of tables and later export the result as a csv file. 
 
