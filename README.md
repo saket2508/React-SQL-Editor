@@ -1,10 +1,12 @@
-## Atlan Frontend Challenge Task
+# Atlan Frontend Challenge Task
 
 An SQL Editor built on React and Typescript.
 
 [Check out the demo](https://dulcet-maamoul-2cd9df.netlify.app/)
 
-### 📝 Todos
+<br/>
+
+## 📝 Todos
 
 - [x] Custom hook for parsing csv files.
 
@@ -18,7 +20,9 @@ An SQL Editor built on React and Typescript.
 
 - [ ] Dark v Light mode.
 
-### 📓 Overview
+<br/>
+
+## 📓 Overview
 
 - This repository contains the source code of the task that was given as part of Atlan's frontend hiring challenge.
 
@@ -34,7 +38,18 @@ An SQL Editor built on React and Typescript.
 
 - Examples of queries that can be run in this app are shown below (see screenshots)
 
-### 🎯 Quickstart
+<br/>
+
+## 🔥 Performance
+
+Following is the lighthouse report summary for this webapp.
+
+<img src="src/screenshots/lighthouse_report.jpeg"/>
+<br/> 
+
+<br/>
+
+## 🎯 Quickstart
 
 - Clone this repository and install the dependencies locally
 ```
@@ -50,14 +65,19 @@ An SQL Editor built on React and Typescript.
 
 - The app should have started on `localhost:3000`
 
-### 🖼️ Screenshots
+<br/>
+
+## 🖼️ Screenshots
 
 <img src="src/screenshots/query_1.jpeg"/>
 <br/> 
+
 <img src="src/screenshots/query_2.jpeg"/>
 <br/>
+
 <img src="src/screenshots/query_3.jpeg"/>
 <br/>
+
 <img src="src/screenshots/query_4.jpeg"/>
 <br/>
 
