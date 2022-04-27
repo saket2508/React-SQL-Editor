@@ -30,7 +30,7 @@ function App() {
             cols: res.cols,
             length: res.length,
         });
-        if (dataLength <= 10) {
+        if (dataLength <= 5) {
             setHidePagination(true);
             setRecords({
                 cols: res.cols,
@@ -61,7 +61,7 @@ function App() {
             cols: newRecords.cols,
             length: newRecords.length,
         });
-        if (newRecords.length <= 10) {
+        if (newRecords.length <= 5) {
             setHidePagination(true);
             setRecords({
                 rows: newRecords.rows,
@@ -181,6 +181,9 @@ function App() {
     };
 
     const handlePageSizeChange = (newPageSize: number) => {
+        if(newPageSize > data.rows.length) {
+            return;
+        }
         let newStartIdx = (currPage - 1) * newPageSize;
         let newEndIdx = currPage * newPageSize;
         if (newEndIdx > data.rows.length) {

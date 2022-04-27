@@ -237,7 +237,7 @@ export function parseSQLQuery(
             }
         }
     }
-    
+    console.log(lst);
     if (lst[0] !== 'select' || lst.length < 4) {
         return { isValid: false, result: null };
     }
