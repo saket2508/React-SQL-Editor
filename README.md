@@ -1,4 +1,4 @@
-# Atlan Frontend Challenge Task
+# React & Typescript SQL Editor
 
 An SQL Editor built on React and Typescript.
 
